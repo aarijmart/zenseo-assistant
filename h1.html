@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>ZenSEO Assistant</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    textarea { width: 100%; height: 100px; }
+    button { padding: 10px 20px; }
+  </style>
+</head>
+<body>
+  <h2>ZenSEO Assistant - ChatGPT SEO Helper</h2>
+  <textarea id="userInput" placeholder="Enter your product or page title..."></textarea>
+  <br><br>
+  <button onclick="getGPTResponse()">Generate SEO Description</button>
+  <p><strong>Output:</strong></p>
+  <div id="response"></div>
+
+  <script>
+    async function getGPTResponse() {
+      const prompt = document.getElementById('userInput').value;
+      const responseElement = document.getElementById('response');
+      responseElement.innerText = "Thinking...";
+
+      const result = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": "Bearer YOUR_API_KEY_HERE",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "gpt-4",
+          messages: [{ role: "user", content: prompt }],
+          max_tokens: 150
+        })
+      });
+      const data = await result.json();
+      responseElement.innerText = data.choices[0].message.content;
+    }
+  </script>
+</body>
+</html>
