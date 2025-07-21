@@ -1,41 +1,53 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>ZenSEO Assistant</title>
+  <meta charset="UTF-8">
+  <title>ZenSEO Assistant - AI SEO Tool</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial; padding: 20px; }
-    textarea { width: 100%; height: 100px; }
-    button { padding: 10px 20px; }
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    textarea, input, button { width: 100%; padding: 10px; margin-top: 10px; }
+    .output { background-color: #f2f2f2; padding: 15px; margin-top: 20px; white-space: pre-wrap; }
   </style>
 </head>
 <body>
-  <h2>ZenSEO Assistant - ChatGPT SEO Helper</h2>
-  <textarea id="userInput" placeholder="Enter your product or page title..."></textarea>
-  <br><br>
-  <button onclick="getGPTResponse()">Generate SEO Description</button>
-  <p><strong>Output:</strong></p>
-  <div id="response"></div>
+  <h2>🧠 ZenSEO AI Assistant</h2>
+  <label for="product">📝 Enter Product Title & Description:</label>
+  <textarea id="product" rows="6" placeholder="E.g., XXL Teardrop Bean Bag made of cotton blend..."></textarea>
+  <button onclick="generateSEO()">⚡ Generate SEO Suggestions</button>
+  <div id="result" class="output"></div>
 
   <script>
-    async function getGPTResponse() {
-      const prompt = document.getElementById('userInput').value;
-      const responseElement = document.getElementById('response');
-      responseElement.innerText = "Thinking...";
+    async function generateSEO() {
+      const product = document.getElementById('product').value;
+      const resultBox = document.getElementById('result');
+      resultBox.innerHTML = '⏳ Generating... Please wait...';
 
-      const result = await fetch("https://api.openai.com/v1/chat/completions", {
+      const prompt = `Act as an SEO expert. Analyze the following product title and description and suggest:
+      1. SEO-optimized Product Title
+      2. Meta Description (under 160 characters)
+      3. 5 Target Keywords
+      Text: ${product}`;
+
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
-          "Authorization": "Bearer YOUR_API_KEY_HERE",
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": "Bearer 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"
         },
         body: JSON.stringify({
           model: "gpt-4",
-          messages: [{ role: "user", content: prompt }],
-          max_tokens: 150
+          messages: [{ role: "user", content: prompt }]
         })
       });
-      const data = await result.json();
-      responseElement.innerText = data.choices[0].message.content;
+
+      const data = await response.json();
+      if (data.choices && data.choices.length > 0) {
+        resultBox.innerHTML = data.choices[0].message.content;
+      } else {
+        resultBox.innerHTML = "❌ Something went wrong. Please try again.";
+      }
     }
   </script>
 </body>
